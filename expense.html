@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    Choose expense amount <input type = "text" id = 'exp' name="exp"> 
+    Choose description <input type = "text" id = 'des' name="des">
+    choose catgorie <input list = "catogories" name="catgorie" id="catgorie">
+    <datalist id="catogories">
+      <option value="food">
+      <option value="vacation">
+      <option value="stay">
+      <option value="transport">
+    </datalist>
+    <button id="button"> add expense </button>
+
+ 
+<ul id = "display"> 
+
+</ul> 
+     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+       const d = document.getElementById('button');
+       d.addEventListener('click',function(event){
+        event.preventDefault(event);
+        let expenseValue = document.getElementById('exp').value.trim(); 
+ let myobj = {
+    choose_expense_amount : expenseValue,
+    choose_des : document.getElementById('des').value,
+    choose_catogorie : document.getElementById('catgorie').value
+ } 
+let o = JSON.stringify(myobj);
+localStorage.setItem(expenseValue,o)
+const display = document.getElementById('display');
+const li = document.createElement('li');
+const text = document.createTextNode(document.getElementById('exp').value+"-"+document.getElementById('des').value+"-"+document.getElementById('catgorie').value)
+li.appendChild(text);
+display.appendChild(li);
+   
+const b = document.createElement('button');
+const t = document.createTextNode('delete');
+b.appendChild(t);
+li.appendChild(b);
+
+b.addEventListener('click',function(event){
+    localStorage.removeItem(expenseValue);
+    li.remove();
+});
+const editbutton = document.createElement('button');
+const edittext = document.createTextNode('edit');
+editbutton.appendChild(edittext);
+li.appendChild(editbutton);
+editbutton.addEventListener('click',function(e){
+    let obj = myobj.choose_expense_amount;
+let storedData = JSON.parse(localStorage.getItem(obj));
+
+    // Populate form fields with the retrieved details
+    if (storedData !== null) {
+        document.getElementById('exp').value = storedData.choose_expense_amount;
+        document.getElementById('des').value = storedData.choose_des;
+        document.getElementById('catgorie').value = storedData.choose_catogorie;
+        localStorage.removeItem(expenseValue);
+    li.remove();
+    }  
+
+});
+
+    });
+});
+
+     </script>
+</body>
+</html>
