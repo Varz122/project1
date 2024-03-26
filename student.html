@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        h1 {
+          text-align: center; 
+          margin-top: 50px; /* Adds some space from the top */
+        }
+        p{
+            text-align: center;  
+        }
+      </style>
+</head>
+
+<body>
+    <h1>Student Manager</h1>
+    <p id="studentCount">All students :0 </p>
+<form onsubmit="handleFormSubmit(event)">
+    Name:<input type = "text" id = "name" name = "name"><br>
+    Mobile:<input type = "tel" id = "phone" name = "phone"><br>
+    Address:<input type ="text" id="address" name = "address"><br>
+    <button> Add</button>
+</form>
+<h2> All Students</h2>
+<ul id = "student">
+
+
+</ul>
+  
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+<script>
+function handleFormSubmit(event){
+    event.preventDefault();
+ const students = {
+    studentname : event.target.name.value,
+    mobile : event.target.phone.value,
+    address : event.target.address.value,
+ };
+ axios
+    .post("https://crudcrud.com/api/4326416464c0474b966ce76e5de08983/studentdata",students)
+    .then((response) =>{ displayUserOnScreen(response.data);
+        updateStudentCount();
+    })
+    .catch((error) => console.log(error));
+document.getElementById("name").value = "";
+document.getElementById("phone").value = "";
+document.getElementById("address").value = "";
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+axios.get("https://crudcrud.com/api/4326416464c0474b966ce76e5de08983/studentdata")
+.then((res)=>{
+    console.log(res);
+    for(var i = 0; i<res.data.length;i++){
+        displayUserOnScreen(res.data[i])
+    }
+
+})
+.catch((error=>console.log(error)))
+})
+
+function displayUserOnScreen(students){
+    const ul = document.querySelector('ul')
+    const li = document.createElement("li");
+    const text = document.createTextNode(students.studentname + " - " + students.mobile + " - " + students.address);
+    li.appendChild(text);
+    ul.appendChild(li);
+    
+    
+   const button = document.createElement('button');
+    button.textContent = 'Delete';
+    li.appendChild(button);
+
+ const editBtn = document.createElement("button");
+  editBtn.appendChild(document.createTextNode("Edit"));
+  li.appendChild(editBtn);
+  button.addEventListener('click', function() {
+        // Remove the list item when delete button is clicked
+        li.remove();
+    axios.delete("https://crudcrud.com/api/4326416464c0474b966ce76e5de08983/studentdata/66029a2c1492af03e8f10451")
+    .then((res)=>console.log(res))
+    .catch((err)=>console.log(err))
+    });
+    editBtn.addEventListener('click', function() {
+    
+        axios.delete("https://crudcrud.com/api/4326416464c0474b966ce76e5de08983/studentdata/660298b11492af03e8f1044b")
+        .then((res) => {
+            console.log("Record deleted successfully");
+            // Populate the form fields with the data from the deleted record
+            document.getElementById("name").value = students.studentname;
+            document.getElementById("phone").value = students.mobile;
+            document.getElementById("address").value = students.address;
+        })
+        .catch((err) => {
+            console.error("Error deleting record:", err);
+        });
+    
+    
+
+
+    })
+
+}
+function updateStudentCount(count = 0) {
+            const countElement = document.getElementById('studentCount');
+            countElement.textContent = "All students: " + (parseInt(countElement.textContent.split(":")[1].trim()) + 1);
+        }
+
+
+
+ 
+</script>
+
+</html>
